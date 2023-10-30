@@ -1,0 +1,17 @@
+{
+	"name": "bee-keyvalue Dockerfile",
+	"build": {
+		"context": "..",
+		"dockerfile": "../Dockerfile"
+	},
+	"forwardPorts": [1633, 1635, 3000],
+	"customizations": {
+		"vscode": {
+		  "extensions": [
+			"dbaeumer.vscode-eslint",
+            "esbenp.prettier-vscode"
+		  ]
+		}
+	},
+	"postStartCommand": "./start.sh"
+}

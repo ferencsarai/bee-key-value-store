@@ -13,6 +13,7 @@ async function main() {
     const def = { first: 'def1', second: 'def2' }
     await jsonStorage.put('def', def)
 
-    await jsonStorage.get("abc")
-    await jsonStorage.get("def")
+    const r1 = await jsonStorage.get("abc")
+    const r2 = await jsonStorage.get("def")
+    console.log({r1})
 }

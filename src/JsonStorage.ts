@@ -45,7 +45,7 @@ export class JsonStorage {
         this.addToStorage("empty.json", {}),
       ]).then(() => {})
       await this.initPromise;
-      console.log('feed URL:', this.feedURLString())
+      console.log('feed URL:', `${this.beeURL.toString()}/bzz/${this.feedManifestResult?.reference}`)
     }
   }
 
@@ -63,7 +63,10 @@ export class JsonStorage {
 
     this.mantarayNode.addFork(
       this.pathToBytes(key),
-      this.hexStringToReference(beeUploadResult.reference)
+      this.hexStringToReference(beeUploadResult.reference), {
+        'Content Type': 'application/json',
+        'Filename': `${key}.json`
+      }
     )
 
     const savedMantaray = await this.mantarayNode.save(
@@ -84,24 +87,22 @@ export class JsonStorage {
     return new TextEncoder().encode(string);
   }
 
-  private feedURLString(): string{
-    return `${this.beeURL.toString()}/bzz/${this.feedManifestResult?.reference}`
-  }
-
   async put(key: string, value: Object) {
     await this.initAsyncResources();
     await this.addToStorage(key, value);
-    console.log('put: ', `${this.feedURLString()}/${key}`)
+    console.log('put: ', key)
     console.log(value)
   }
 
-  async get(key: string) {
+  async get(key: string): Promise<Object> {
     await this.initAsyncResources();
-    const urlString = `${this.beeURL.toString()}/bzz/${this.feedManifestResult?.reference}/${key}`
-    const res = await fetch(urlString)
-    const value = res.ok? await res.json() : {}
-    console.log('get: ', urlString)
+    const res = await this.bee.downloadFile(
+      this.feedManifestResult!.reference as any, key
+    )
+    const value = JSON.parse(res.data.text())
+    console.log('get: ', key)
     console.log(value)
+    return value
   }
 
 }
